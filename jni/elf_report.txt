@@ -1,0 +1,156 @@
+﻿============================================================
+ELF REVERSE ANALYSIS REPORT - ARM64 ANDROID
+============================================================
+File: D:\fenxiwanjian\过检加解密\完整修复\libs\arm64-v8a\1.4
+Size: 16255344 bytes
+
+Type: 3
+Machine: 183 (AARCH64)
+Entry Point: 0x0000000000D336A0
+Program Headers: 10, Section Headers: 27
+
+============================================================
+PROGRAM HEADERS
+============================================================
+[0] PHDR  offset=0x00000040 vaddr=0x0000000000000040 filesz=0x00000230 flags=4
+[1] INTERP  offset=0x00000270 vaddr=0x0000000000000270 filesz=0x00000015 flags=4
+[2] LOAD  offset=0x00000000 vaddr=0x0000000000000000 filesz=0x00F27C00 flags=5
+[3] LOAD  offset=0x00F27C00 vaddr=0x0000000000F2BC00 filesz=0x000064E0 flags=6
+[4] LOAD  offset=0x00F2E0E0 vaddr=0x0000000000F360E0 filesz=0x00051F00 flags=6
+[5] DYNAMIC  offset=0x00F2CD08 vaddr=0x0000000000F30D08 filesz=0x000001F0 flags=6
+[6] GNU_STACK  offset=0x00F27C00 vaddr=0x0000000000F2BC00 filesz=0x000064E0 flags=4
+[7] 0x6474E550  offset=0x00CFD0BC vaddr=0x0000000000CFD0BC filesz=0x000085FC flags=4
+[8] GNU_EH_FRAME  offset=0x00000000 vaddr=0x0000000000000000 filesz=0x00000000 flags=6
+[9] NOTE  offset=0x00000288 vaddr=0x0000000000000288 filesz=0x000000BC flags=4
+
+============================================================
+SECTION HEADERS
+============================================================
+[1] .interp  [PROGBITS] addr=0x0000000270 offset=0x00000270 size=0x00000015
+[2] .note.android.ident  [NOTE] addr=0x0000000288 offset=0x00000288 size=0x00000098
+[3] .note.gnu.build-id  [NOTE] addr=0x0000000320 offset=0x00000320 size=0x00000024
+[4] .dynsym  [DYNSYM] addr=0x0000000348 offset=0x00000348 size=0x000024A8
+[5] .gnu.version  [0x6FFFFFFF] addr=0x00000027F0 offset=0x000027F0 size=0x0000030E
+[6] .gnu.version_r  [0x6FFFFFFE] addr=0x0000002B00 offset=0x00002B00 size=0x00000080
+[7] .gnu.hash  [0x6FFFFFF6] addr=0x0000002B80 offset=0x00002B80 size=0x000003F4
+[8] .dynstr  [STRTAB] addr=0x0000002F74 offset=0x00002F74 size=0x000017D2
+[9] .rela.dyn  [RELA] addr=0x0000004748 offset=0x00004748 size=0x000B0358
+[10] .rela.plt  [RELA] addr=0x00000B4AA0 offset=0x000B4AA0 size=0x00001338
+[11] .gcc_except_table  [PROGBITS] addr=0x00000B5DD8 offset=0x000B5DD8 size=0x00007010
+[12] .rodata  [PROGBITS] addr=0x00000BCDF0 offset=0x000BCDF0 size=0x00C402CC
+[13] .eh_frame_hdr  [PROGBITS] addr=0x0000CFD0BC offset=0x00CFD0BC size=0x000085FC
+[14] .eh_frame  [PROGBITS] addr=0x0000D056B8 offset=0x00D056B8 size=0x0002DFE8
+[15] .text  [PROGBITS] addr=0x0000D336A0 offset=0x00D336A0 size=0x001F3870
+[16] .plt  [PROGBITS] addr=0x0000F26F10 offset=0x00F26F10 size=0x00000CF0
+[17] .init_array  [INIT_ARRAY] addr=0x0000F2BC00 offset=0x00F27C00 size=0x00000038
+[18] .data.rel.ro  [PROGBITS] addr=0x0000F2BC38 offset=0x00F27C38 size=0x000050D0
+[19] .dynamic  [DYNAMIC] addr=0x0000F30D08 offset=0x00F2CD08 size=0x000001F0
+[20] .got  [PROGBITS] addr=0x0000F30EF8 offset=0x00F2CEF8 size=0x00000B68
+[21] .got.plt  [PROGBITS] addr=0x0000F31A60 offset=0x00F2DA60 size=0x00000680
+[22] .relro_padding  [NOBITS] addr=0x0000F320E0 offset=0x00F2E0E0 size=0x00000F20
+[23] .data  [PROGBITS] addr=0x0000F360E0 offset=0x00F2E0E0 size=0x00051F00
+[24] .bss  [NOBITS] addr=0x0000F87FE0 offset=0x00F7FFE0 size=0x000C9A00
+[25] .comment  [PROGBITS] addr=0x0000000000 offset=0x00F7FFE0 size=0x0000017A
+[26] .shstrtab  [STRTAB] addr=0x0000000000 offset=0x00F8015A size=0x0000010F
+
+============================================================
+KEYSTRING PATTERN SCAN
+============================================================
+  'libsjz.so' -> 6 occurrences @ 0x000FB8F6, 0x0027F982, 0x00284997
+  'libhacker.so' -> 4 occurrences @ 0x00284987, 0x002849C4, 0x00284AC7
+  'libtersafe.so' -> 1 occurrences @ 0x00ACE79A
+  'libWenDu.so' -> 1 occurrences @ 0x0028F511
+  'libUE4.so' -> 1 occurrences @ 0x00285584
+  'ptrace' -> 27 occurrences @ 0x000C2037, 0x000C6FFB, 0x000CA740
+  'libEGL.so' -> 3 occurrences @ 0x0000471A, 0x000C6F1D, 0x000FB86F
+  'libGLESv1_CM.so' -> 1 occurrences @ 0x000FB879
+  'libGLESv2.so' -> 1 occurrences @ 0x000FB889
+  'libvulkan.so' -> 2 occurrences @ 0x00004739, 0x000BDACC
+  'JNI_OnLoad' -> 5 occurrences @ 0x00213942, 0x00213FC2, 0x002150AF
+  'debugger' -> 1 occurrences @ 0x000C0D07
+  'check' -> 2 occurrences @ 0x000EC3C7, 0x00286358
+  'sign' -> 74 occurrences @ 0x000BD6DC, 0x000BD6EB, 0x000BF257
+  'hash' -> 8 occurrences @ 0x000CE61C, 0x000E6D17, 0x000E6D9F
+  'rsa' -> 1 occurrences @ 0x00ACE79F
+  '/proc/' -> 23 occurrences @ 0x000BE927, 0x000C9CFC, 0x000C9D24
+  '/system/' -> 20 occurrences @ 0x00000270, 0x000C67AC, 0x000C9C3C
+  'TracerPid' -> 1 occurrences @ 0x00214228
+
+============================================================
+DYNAMIC SEGMENT
+============================================================
+  DT_NEEDED : 0x000000000000178E
+  DT_NEEDED : 0x0000000000001798
+  DT_NEEDED : 0x00000000000017A6
+  DT_NEEDED : 0x00000000000017B0
+  DT_NEEDED : 0x00000000000017BD
+  DT_NEEDED : 0x00000000000017C5
+  DT_NEEDED : 0x0000000000001762
+  DT_NEEDED : 0x000000000000177D
+  DT_NEEDED : 0x0000000000001785
+  0x000000000000001E : 0x0000000000000008
+  0x000000006FFFFFFB : 0x0000000008000001
+  0x0000000000000015 : 0x0000000000000000
+  0x0000000000000007 : 0x0000000000004748
+  0x0000000000000008 : 0x00000000000B0358
+  0x0000000000000009 : 0x0000000000000018
+  0x000000006FFFFFF9 : 0x000000000000749A
+  0x0000000000000017 : 0x00000000000B4AA0
+  0x0000000000000002 : 0x0000000000001338
+  0x0000000000000003 : 0x0000000000F31A60
+  0x0000000000000014 : 0x0000000000000007
+  DT_SYMTAB : 0x0000000000000348
+  DT_SYMENT : 0x0000000000000018
+  DT_STRTAB : 0x0000000000002F74
+  DT_STRSZ : 0x00000000000017D2
+  0x000000006FFFFEF5 : 0x0000000000002B80
+  DT_GNU_HASH : 0x0000000000F2BC00
+  0x000000000000001B : 0x0000000000000038
+  0x000000006FFFFFF0 : 0x00000000000027F0
+  0x000000006FFFFFFE : 0x0000000000002B00
+  0x000000006FFFFFFF : 0x0000000000000003
+  DT_NULL : 0x0000000000000000
+
+NEEDED LIBRARIES:
+  - liblog.so
+  - libandroid.so
+  - libEGL.so
+  - libGLESv3.so
+  - libz.so
+  - libvulkan.so
+  - libc.so
+  - libm.so
+  - libdl.so
+
+============================================================
+EXPORTED SYMBOLS (DYNSYM) - via DYNAMIC segment
+============================================================
+Found .dynsym at offset=0x00000348 size=0x000024A8
+Found .gnu.hash at offset=0x00002B80
+Found .dynstr at offset=0x00002F74 size=0x000017D2
+
+Iterating symbol table from offset 0x00000348 (max 471 entries)
+
+Total symbol entries: 471
+Named symbols: 400
+Function symbols (type=FUNC, value>0): 0
+Data symbols (type=OBJECT, value>0): 149
+
+
+============================================================
+CONCLUSION
+============================================================
+Based on this analysis:
+1. File is a heavily protected ARM64 Android shared library (APK game module)
+2. Contains references to libsjz.so, libhacker.so - likely anti-tamper / anti-hook components
+3. Contains references to libtersafe.so - Tencent TShell safe (commercial binary protector)
+4. References libUE4.so - Unreal Engine 4 game engine (this is a game module)
+5. References ptrace - anti-debugging detection
+6. Entry point 0x00D336A0 in a large .text section - the actual protection logic resides there
+
+Recommendation:
+- Further analysis of .text section near entry point requires ARM64 disassembly (IDA/Ghidra)
+- The DYNAMIC segment shows standard external library dependencies
+- This is a PROTECTED binary - symbol table values may be mangled/obfuscated
+- The 'hacker'/'sjz' strings suggest this module loads anti-cheat sub-modules
+- libtersafe.so is Tencent commercial anti-tamper / packer solution
