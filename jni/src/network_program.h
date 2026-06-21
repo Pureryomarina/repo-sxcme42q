@@ -14,6 +14,8 @@
 #include <map>
 #include <cstdlib>
 #include <thread>
+#include <unistd.h>
+#include <sys/wait.h>
 #include "utils/http_utils.cpp"
 #include "utils/sign_utils.cpp"
 #include "utils/crypt_utils.cpp"
