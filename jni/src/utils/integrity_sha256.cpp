@@ -33,12 +33,12 @@ static inline void crc32_init_table() {
     crc32_table_init = true;
 }
 
-// TAIL_SIZE = 64 (0x40), XOR 编码避免 strings 搜索
+// TAIL_SIZE = 128 (0x80), XOR 编码避免 strings 搜索
 static const uint8_t  TAIL_XOR = 0xA3;
-static const uint8_t  TAIL_ENC = 0x40 ^ 0xA3;  // 0x40 ^ 0xA3 = 0xE3
+static const uint8_t  TAIL_ENC = 0x80 ^ 0xA3;  // 0x80 ^ 0xA3 = 0x23
 
 static inline size_t get_tail_size() {
-    return (size_t)(TAIL_ENC ^ TAIL_XOR);  // = 64
+    return (size_t)(TAIL_ENC ^ TAIL_XOR);  // = 128
 }
 
 static uint32_t rotr(uint32_t x, int n) { return (x >> n) | (x << (32 - n)); }

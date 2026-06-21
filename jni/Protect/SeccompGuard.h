@@ -170,11 +170,12 @@ struct TimingDetector {
 
         uint64_t delta = now - last_ns;
 
-        // 超过 50ms → 可疑 (正常代码路径通常 < 5ms)
-        // 降低阈值以更灵敏地检测单步调试
-        if (delta > 50000000ULL) {
+        // 超过 3s → 可疑。启动阶段需多次读取/HMAC 整个 16MB 文件，
+        // 单层就可能耗时数百 ms，阈值过低必然误报；而真正的单步调试/
+        // 断点暂停是人为操作，间隔在秒级以上，3s 阈值仍能可靠捕获。
+        if (delta > 3000000000ULL) {
             anomaly_count++;
-            if (anomaly_count >= 2) {  // 降为 2 次即报警
+            if (anomaly_count >= 2) {
                 detected = true;
             }
         }

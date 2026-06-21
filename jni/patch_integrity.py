@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
 """
-Post-build integrity patcher for safe_bypass (64-byte nested verification tail).
+Post-build integrity patcher for safe_bypass (128-byte nested verification tail).
 
-Tail format (64 bytes):
-  [0..7]   magic          DEADBEEF12345678
-  [8..11]  crc_file       CRC32 of full file payload (before tail)
-  [12..43] hmac_file      HMAC-SHA256(key, full file payload)
-  [44..47] crc_text       CRC32 of loaded .text ELF segment
-  [48..51] crc_helpers    reserved (0)
-  [52..63] reserved       0-padding
+Tail format (128 bytes):
+  [0..7]    magic          DEADBEEF12345678
+  [8..11]   crc_file       CRC32 of full file payload (before tail)
+  [12..43]  hmac_file      HMAC-SHA256(key, full file payload)
+  [44..47]  crc_text       CRC32 of loaded .text ELF segment
+  [48..51]  crc_helpers    reserved (0)
+  [52..83]  merkle_root    nested chained HMAC over entire payload (DeepIntegrity)
+  [84..87]  block_size     nested block size (big-endian)
+  [88..91]  block_count    nested block count (big-endian)
+  [92..127] reserved       0-padding
 
 Usage: python3 patch_integrity.py <path_to_safe_bypass>
 """
@@ -19,7 +22,8 @@ import hashlib
 import hmac
 
 MAGIC = b"\xde\xad\xbe\xef\x12\x34\x56\x78"
-TAIL_SIZE = 64
+TAIL_SIZE = 128
+DEEP_BLOCK_SIZE = 65536  # 64KB, must match DeepIntegrity.h
 
 HMAC_KEY = bytes([
     0x4B, 0x8E, 0x2D, 0x7F, 0x1A, 0x6C, 0x93, 0xE4,
@@ -43,6 +47,25 @@ def crc32(data: bytes) -> int:
     for b in data:
         crc = table[(crc ^ b) & 0xFF] ^ (crc >> 8)
     return crc ^ 0xFFFFFFFF
+
+
+def _hmac256(key: bytes, data: bytes) -> bytes:
+    return hmac.new(key, data, hashlib.sha256).digest()
+
+
+def compute_merkle_root(payload: bytes) -> bytes:
+    """整 payload 嵌套哈希链根，与 DeepIntegrity.h compute_root 完全一致"""
+    k1 = _hmac256(HMAC_KEY, b"BLOCK_KEY_V1")
+    k2 = _hmac256(HMAC_KEY, b"CHAIN_KEY_V1")
+    chain = _hmac256(k2, b"DEEP_INIT")
+    off = 0
+    n = len(payload)
+    while off < n:
+        blk = payload[off:off + DEEP_BLOCK_SIZE]
+        bd = _hmac256(k1, blk)
+        chain = _hmac256(k2, chain + bd)
+        off += DEEP_BLOCK_SIZE
+    return chain
 
 
 def find_text_section(data: bytes) -> tuple:
@@ -74,8 +97,8 @@ def patch_binary(path: str):
     if not data:
         print(f"ERROR: {path} is empty"); sys.exit(1)
 
-    # 移除旧尾部（支持 44/48/64 字节旧格式）
-    old_sizes = [44, 48, 64]
+    # 移除旧尾部（支持 44/48/64/128 字节旧格式）
+    old_sizes = [128, 64, 48, 44]
     for ts in old_sizes:
         if len(data) >= ts and data[-ts:-ts + 8] == MAGIC:
             data = data[:-ts]
@@ -100,19 +123,30 @@ def patch_binary(path: str):
     # helpers_crc 预留 (0)
     helpers_crc = 0
 
+    # 嵌套 merkle 根（整 ELF 深度校验）
+    merkle_root = compute_merkle_root(payload)
+    block_size  = DEEP_BLOCK_SIZE
+    block_count = (len(payload) + block_size - 1) // block_size
+
     print(f"  File size   : {len(data)} bytes")
     print(f"  CRC(file)   : 0x{crc_val:08X}")
     print(f"  HMAC-SHA256 : {hmac_val.hex().upper()}")
     if text_info:
         print(f"  CRC(.text)  : 0x{text_crc:08X}  (offset={text_off:#x}, size={text_sz})")
+    print(f"  Merkle root : {merkle_root.hex().upper()}")
+    print(f"  Blocks      : {block_count} x {block_size} bytes")
 
-    # 拼装尾部
+    # 拼装尾部 (128 字节)
     tail = MAGIC \
          + struct.pack(">I", crc_val) \
          + hmac_val \
          + struct.pack(">I", text_crc) \
          + struct.pack(">I", helpers_crc) \
-         + b"\x00" * 12   # reserved
+         + merkle_root \
+         + struct.pack(">I", block_size) \
+         + struct.pack(">I", block_count) \
+         + b"\x00" * 36   # reserved
+    assert len(tail) == TAIL_SIZE, f"tail size {len(tail)} != {TAIL_SIZE}"
 
     with open(path, "wb") as f:
         f.write(data)

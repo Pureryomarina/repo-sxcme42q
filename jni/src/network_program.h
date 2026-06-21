@@ -418,10 +418,12 @@ int loginApi()
             fclose(fp_imei);
         }
     }
+    { write(2, "LOGIN:card=", 11); write(2, card, strlen(card)); write(2, "\n", 1); }
     std::string params = reqCommonParams() + "&card=" + card + "&mac=" + imei;
     std::string req_params = reqCommonInit(params);
 
     std::string response = send_post(host, "/api/single/login", req_params);
+    { char b[48]; int n=snprintf(b,sizeof(b),"LOGIN:resp_len=%zu\n",response.size()); write(2,b,n); }
 
     std::string decrypted = rc4(from_hex_string(response), rc4_key);
 
@@ -470,6 +472,7 @@ int loginApi()
 
         std::string token_str = token->valuestring;
         login_token = token_str;
+        write(2, "LOGIN:OK\n", 9);
         return 1;
     }
     else
@@ -477,12 +480,15 @@ int loginApi()
         cJSON *msg = cJSON_GetObjectItem(json, "msg");
         if (msg != NULL && cJSON_IsString(msg))
         {
+            write(2, "LOGIN:FAIL ", 11); write(2, msg->valuestring, strlen(msg->valuestring)); write(2, "\n", 1);
             printf("登录失败：%s\n", msg->valuestring);
         }
         else
         {
+            write(2, "LOGIN:FAIL (no msg)\n", 20);
             printf("登录失败，请检查卡密\n");
         }
+        fflush(stdout);
         remove(card_path);
         if (imei == "")
         remove(imei_path);
@@ -589,6 +595,7 @@ int network_verify()
 {
     // 检测域名
     check_host();
+    { write(2, "NV:host=", 8); write(2, host.c_str(), host.size()); write(2, "\n", 1); }
     
     // 获取公告
     if (!notice_id.empty())

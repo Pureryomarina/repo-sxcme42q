@@ -59,7 +59,7 @@ bool compute_file_hmac(const uint8_t *key, size_t key_len, uint8_t mac_out[32]);
 uint32_t compute_loaded_text_crc(const char *soname);
 
 static const uint8_t INTEGRITY_MAGIC[8] = {0xDE, 0xAD, 0xBE, 0xEF, 0x12, 0x34, 0x56, 0x78};
-static const size_t  TAIL_SIZE = 64;  // 8 magic + 4 crc + 32 hmac + 4 text_crc + 4 helpers_crc + 12 reserved
+static const size_t  TAIL_SIZE = 128; // 8 magic+4 crc+32 hmac+4 text_crc+4 helpers_crc+32 merkle_root+4 blk_size+4 blk_count+36 reserved
 
 static inline bool get_self_path(char *out, size_t out_sz) {
     ssize_t len = readlink("/proc/self/exe", out, out_sz - 1);

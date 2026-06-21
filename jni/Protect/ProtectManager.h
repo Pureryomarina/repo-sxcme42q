@@ -124,10 +124,17 @@ inline const char* check_once(const ProtectConfig &cfg) {
         if (!res.crc_ok) return "text_crc_mismatch";
         if (!res.sha256_ok) return "text_sha256_mismatch";
 
-        // 内存级 .text CRC 检测（检测运行时 patch/hook）
+        // 内存级 .text CRC 检测（检测运行时 patch/hook）——基线对比
+        // 首次调用采集干净基线，后续与基线比对，检测运行时 .text 被改动。
+        // 注意：不能与 res.actual_crc（整文件 CRC）比，二者本质不同必然误报。
+        static uint32_t s_mem_text_baseline = 0;
         uint32_t mem_crc = IntegrityCheck::calc_text_crc(cfg.target_soname);
-        if (mem_crc != 0 && res.actual_crc != 0 && mem_crc != res.actual_crc) {
-            return "memory_text_patched";
+        if (mem_crc != 0) {
+            if (s_mem_text_baseline == 0) {
+                s_mem_text_baseline = mem_crc;
+            } else if (mem_crc != s_mem_text_baseline) {
+                return "memory_text_patched";
+            }
         }
     }
 
@@ -173,6 +180,9 @@ inline void* monitor_thread_func(void *arg) {
     while (ctx->running.load()) {
         const char *threat = check_once(ctx->config);
         if (threat && threat[0] != '\0') {
+            write(2, "MONITOR_THREAT=", 15);
+            write(2, threat, strlen(threat));
+            write(2, "\n", 1);
             handle_violation(ctx->config, threat, &ctx->violation_count);
         }
         usleep(ctx->config.monitor_interval_ms * 1000);
